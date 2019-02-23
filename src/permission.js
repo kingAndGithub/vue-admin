@@ -11,6 +11,7 @@ const whiteList = ['/login', '/auth-redirect']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
+  console.log(getToken())
   if (getToken()) { // determine if there has token
     /* has token*/
     if (to.path === '/login') {
@@ -18,9 +19,15 @@ router.beforeEach((to, from, next) => {
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
       const roles = store.getters.roles
+      // TODO 未缓存 权限组，刷新页面权限丢失，系统默认退出
       if (roles.length === 0) {
-        store.dispatch('FedLogOut').then(() => {
-          next({ path: '/' })
+        store.dispatch('ChangeRoles').then(res => {
+          next({ ...to, replace: true })
+        }).catch(err => {
+          store.dispatch('FedLogOut').then(() => {
+            Message.error(err)
+            next({ path: '/' })
+          })
         })
       } else {
         let obj

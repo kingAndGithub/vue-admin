@@ -1,23 +1,31 @@
 import request from '@/utils/request'
 
 export function loginByUsername(username, password) {
-  // const data = {
-  //   username,
-  //   password
-  // }
+  const data = {
+    username,
+    password
+  }
   // return request({
   //   url: '/login/login',
   //   method: 'post',
   //   data
   // })
-  return new Promise((resolve) => {
-    resolve({
-      data: {
-        roles: ['/admin/list'],
-        name: 'admin',
-        token: new Date().valueOf()
-      }
-    })
+  // return new Promise((resolve) => {
+  //   resolve({
+  //     data: {
+  //       roles: ['/admin/list'],
+  //       name: 'admin',
+  //       token: new Date().valueOf()
+  //     }
+  //   })
+  // })
+  return request({
+    url: '/login',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data
   })
 }
 

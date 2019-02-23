@@ -22,6 +22,7 @@ const user = {
     },
     SET_TOKEN: (state, token) => {
       state.token = token
+      setToken(state.token)
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -44,33 +45,12 @@ const user = {
   },
 
   actions: {
-    // 登陆
-    Login({ commit, dispatch }, userInfo) {
-      const username = userInfo.username.trim()
-      return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
-          setToken(response.data.token)
-          const data = response.data
-          commit('SET_TOKEN', data.token)
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', 'avatar.gif')
-          commit('SET_INTRODUCTION', data.introduction)
-          dispatch('GenerateRoutes', data) // 动态修改权限后 重绘侧边菜单
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
     // 用户名登录
     LoginByUsername({ commit, dispatch }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
           const data = response.data
-          setToken(data.token)
           commit('SET_TOKEN', data.token)
           commit('SET_ROLES', data.roles)
           commit('SET_NAME', data.name)
@@ -106,17 +86,22 @@ const user = {
       })
     },
 
-    // 动态修改权限
-    ChangeRoles({ commit, dispatch }, role) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', role)
-        setToken(role)
-        getUserInfo(role).then(response => {
+    // 动态修改权限 (刷新页面时，重新获取用户信息)
+    ChangeRoles({ commit, dispatch }, token) {
+      return new Promise((resolve, reject) => {
+        getUserInfo(token).then(response => {
+          if (!response.data) {
+            reject('登陆失败')
+          }
           const data = response.data
+          commit('SET_TOKEN', token)
           commit('SET_ROLES', data.roles)
           commit('SET_NAME', data.name)
+          commit('SET_AVATAR', 'avatar.gif')
           dispatch('GenerateRoutes', data) // 动态修改权限后 重绘侧边菜单
           resolve()
+        }).catch(err => {
+          reject(err)
         })
       })
     }
