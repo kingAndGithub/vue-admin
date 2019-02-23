@@ -17,9 +17,7 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      console.log(store.getters.addRouters)
       const roles = store.getters.roles
-      console.log(roles)
       if (roles.length === 0) {
         store.dispatch('FedLogOut').then(() => {
           next({ path: '/' })

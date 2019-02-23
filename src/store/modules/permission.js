@@ -1,4 +1,6 @@
 import { constantRouterMap, asyncRouterMap } from '@/router'
+import { deepClone } from '@/utils/index'
+import router from '../../router'
 
 /**
  * 递归过滤异步路由表，返回符合用户角色权限的路由表
@@ -19,7 +21,7 @@ function filterAsyncRouter(routes, roles) {
         }
       }
       if (childs.length > 0) {
-        pm = route
+        pm = deepClone(route)
         pm.children = childs
       }
     }
@@ -38,6 +40,7 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+      router.addRoutes(state.addRouters) // 动态添加可访问路由表
     }
   },
   actions: {
