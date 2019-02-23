@@ -5,7 +5,7 @@
         <h3 class="title">
           {{ $t('login.title') }}
         </h3>
-        <lang-select class="set-language" />
+        <!--<lang-select class="set-language" />-->
       </div>
 
       <el-form-item prop="username">
@@ -54,19 +54,19 @@
           <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
         </div>
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          {{ $t('login.thirdparty') }}
-        </el-button>
+        <!--<el-button class="thirdparty-button" type="primary" @click="showDialog=true">-->
+        <!--{{ $t('login.thirdparty') }}-->
+        <!--</el-button>-->
       </div>
     </el-form>
 
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
+    <!--<el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">-->
+    <!--{{ $t('login.thirdpartyTips') }}-->
+    <!--<br>-->
+    <!--<br>-->
+    <!--<br>-->
+    <!--<social-sign />-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -134,8 +134,9 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(res => {
             this.loading = false
+            // 登陆判断用户名密码是否正确
             this.$router.push({ path: this.redirect || '/' })
           }).catch(() => {
             this.loading = false
